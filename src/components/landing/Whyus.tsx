@@ -14,7 +14,7 @@ export default function FeatureCards() {
       cta: "Learn More",
     },
     {
-      name: "Effortless Attendance Tracking",
+      name: "Effortless Attendance Tracking system",
       description:
         "Monitor attendance seamlessly with our intuitive management tools.",
       backgroundImage: "url(/attendance.png)", // Use your image path
