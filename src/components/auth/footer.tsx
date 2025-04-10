@@ -22,7 +22,7 @@ const FooterPage = () => {
               className="text-slate-200 hover:text-white dark:hover:text-white"
             >
               <FaFacebook />
-              <span className="sr-only">Facebook page</span>
+              <span className="sr-only">Facebook</span>
             </Link>
             <Link
               href="#"
@@ -36,7 +36,7 @@ const FooterPage = () => {
               className="text-slate-200 hover:text-white dark:hover:text-white ms-5"
             >
               <FaXTwitter />
-              <span className="sr-only">Twitter page</span>
+              <span className="sr-only">Twitter</span>
             </Link>
             <Link
               href="#"
