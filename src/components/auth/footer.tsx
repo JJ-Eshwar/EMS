@@ -29,7 +29,7 @@ const FooterPage = () => {
               className="text-slate-200 hover:text-white dark:hover:text-white ms-5"
             >
               <FaDiscord />
-              <span className="sr-only">Discord community</span>
+              <span className="sr-only">Discord</span>
             </Link>
             <Link
               href="#"
