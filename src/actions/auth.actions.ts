@@ -7,6 +7,8 @@ import APP_PATH from "@/src/config/path.config";
 import { sendConfirmationEmail } from "../lib/sendConfirmationEmail";
 import { cookies } from "next/headers";
 
+//it is a authentication function for user sign up and login
+
 export const signUp = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
