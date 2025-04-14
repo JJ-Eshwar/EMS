@@ -142,7 +142,7 @@ const StudentProfileComponent = () => {
               htmlFor="enrollmentNumber"
               className="block font-medium text-[#676767]"
             >
-              Enrollment Number
+              Roll Number
             </label>
             <input
               id="enrollmentNumber"
