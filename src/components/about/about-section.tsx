@@ -202,7 +202,7 @@ const AboutSection = () => {
             </div>
             <div className="border-4 flex-1">
               {/* Placeholder for image */}
-              An image of Rahul and Mayank
+              An image of Eshwar and venkat and madhu
             </div>
           </div>
         </div>

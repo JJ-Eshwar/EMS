@@ -1,114 +1,107 @@
-import { NextAuthOptions, SessionStrategy } from "next-auth";
-import bcrypt from "bcryptjs";
-import prisma from "@/src/db/db";
+// src/lib/authOptions.ts
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import { AuthSchema } from "@/src/lib/validators/auth.validator";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "../db/db"; // Adjust path if needed
+import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
+    // Add other providers like Google here if you still need them
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "demo@demo.com" },
+        email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
         password: { label: "Password", type: "password" },
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      async authorize(credentials): Promise<any> {
-        const result = AuthSchema.safeParse(credentials);
-
-        if (!result.success) {
-          throw new Error("Validation Error");
+      async authorize(credentials, req) {
+        if (!credentials?.email || !credentials?.password) {
+          console.error("Missing credentials");
+          return null; // Indicate failure
         }
 
-        const { email, password } = result.data;
-        try {
-          const user = await prisma.user.findUnique({
-            where: {
-              email: email,
-            },
-          });
-          if (!user) {
-            throw new Error("No user found");
-          }
-
-          if (user.password === null) {
-            throw new Error("Password is missing");
-          }
-          const isPasswordCorrect = await bcrypt.compare(
-            password,
-            user.password,
-          );
-
-          if (!isPasswordCorrect) {
-            console.log("Incorrect password");
-            throw new Error("Incorrect Password");
-          }
-
-          return user;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          console.error("Error during authentication:", error);
-          throw new Error(error);
-        }
-      },
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    }),
-  ],
-  callbacks: {
-    async signIn({ account, profile }) {
-      if (account?.provider === "google" && profile) {
-        const { sub: oauthId, email, name } = profile;
-
-        let existingUser = await prisma.user.findFirst({
-          where: {
-            OR: [{ email: email! }, { oauthId: oauthId! }],
-          },
+        // 1. Find user by email in your database
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
         });
 
-        if (!existingUser) {
-          existingUser = await prisma.user.create({
-            data: {
-              oauthId,
-              email: email as string,
-              name: name as string,
-              isvarified: true,
-            },
-          });
+        if (!user) {
+          console.error("No user found with email:", credentials.email);
+          return null; // User not found
         }
-      }
 
-      return true;
-    },
+        // --- Optional: Check if email is verified ---
+        // if (!user.isvarified) { // Assuming you have an 'isvarified' field
+        //   console.error("User email not verified:", credentials.email);
+        //   // You might want to throw a specific error here or return null
+        //   // throw new Error("Email not verified");
+        //   return null;
+        // }
+        // --- End Optional Check ---
 
+
+        // 2. Verify password
+        // Ensure user.password is not null before comparing
+        if (!user.password) {
+            console.error("User found but has no password set:", credentials.email);
+            return null; // Cannot authenticate if password isn't set
+        }
+        const isValidPassword = await bcrypt.compare(
+          credentials.password,
+          user.password // Make sure 'password' is the name of your hashed password field in the User model
+        );
+
+        if (!isValidPassword) {
+          console.error("Invalid password for user:", credentials.email);
+          return null; // Password doesn't match
+        }
+
+        // 3. Return user object if everything is okay
+        //    This object is what gets saved in the JWT/session.
+        //    Make sure it includes fields you need, like id, email, name, role etc.
+        //    It MUST include at least 'id' and 'email' for the adapter/session to work correctly.
+        console.log("User authorized successfully:", user.email);
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name, // Add other fields as needed
+          // Add other properties you want in the session/token
+        };
+      },
+    }),
+  ],
+  session: {
+    strategy: "jwt", // Using JWT for session strategy is common
+  },
+  pages: {
+    signIn: '/login', // Specify your custom login page path
+    // error: '/auth/error', // Optional: custom error page
+    // signOut: '/logout', // Optional: custom signout page
+  },
+  callbacks: {
+    // You might need callbacks to customize the session or JWT token
     async jwt({ token, user }) {
+      // When authorize returns a user, add its id to the token
       if (user) {
-        token.id = user.id?.toString();
-        token.role = user.role?.toString();
+        token.id = user.id;
+        // Add any other user properties you want in the token
+        // token.role = user.role;
       }
       return token;
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: any) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+    async session({ session, token }) {
+      // Add properties from the token (like user.id) to the session object
+      if (token && session.user) {
+        // IMPORTANT: Make sure the 'id' property exists on your session.user type
+        // You might need to augment the default NextAuth types
+        (session.user as { id: string }).id = token.id as string;
+        // session.user.role = token.role; // Add other properties if needed
       }
       return session;
     },
   },
-  pages: {
-    signIn: "/sign-in",
-  },
-  session: {
-    strategy: "jwt" as SessionStrategy,
-    maxAge: 20 * 60 * 60,
-  },
-  jwt: {
-    maxAge: 24 * 60 * 60,
-  },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET, // Ensure this is set in your .env file
+  debug: process.env.NODE_ENV === "development", // Optional: Enable debug logs in development
 };
+
