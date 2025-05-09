@@ -95,7 +95,7 @@ export const RegisterTeacher = async (formData: FormData) => {
         role,
         institute_id: instituteId,
         subjects_teaching,
-        departments: {
+        Department: {
           connect: { id: department_id }, // Connect to the existing department by ID
         },
       };

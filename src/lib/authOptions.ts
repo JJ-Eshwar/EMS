@@ -1,5 +1,5 @@
 // src/lib/authOptions.ts
-import { NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../db/db"; // Adjust path if needed
@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  providers: [
+  providers: [ // "@ts-expect-error"
     // Add other providers like Google here if you still need them
     CredentialsProvider({
       name: "Credentials",
@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials, /*req */) {
         if (!credentials?.email || !credentials?.password) {
           console.error("Missing credentials");
           return null; // Indicate failure
@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
     // error: '/auth/error', // Optional: custom error page
     // signOut: '/logout', // Optional: custom signout page
   },
-  callbacks: {
+  callbacks: { // "@ts-expect-error"
     // You might need callbacks to customize the session or JWT token
     async jwt({ token, user }) {
       // When authorize returns a user, add its id to the token
@@ -90,12 +90,14 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token, /*req */ }) {
       // Add properties from the token (like user.id) to the session object
       if (token && session.user) {
         // IMPORTANT: Make sure the 'id' property exists on your session.user type
         // You might need to augment the default NextAuth types
         (session.user as { id: string }).id = token.id as string;
+
+
         // session.user.role = token.role; // Add other properties if needed
       }
       return session;
