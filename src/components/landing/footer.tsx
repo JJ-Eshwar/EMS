@@ -69,7 +69,7 @@ const Footer = () => {
         </div>
         <div className="sm:flex sm:items-center sm:justify-between mt-10">
           <span className="text-sm text-slate-200 sm:text-center dark:text-gray-400">
-            © 2024 CampusSync All Rights Reserved.
+            © 2025 Campusx All Rights Reserved.
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0">
             <Link
