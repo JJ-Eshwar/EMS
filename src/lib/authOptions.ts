@@ -1,5 +1,6 @@
 // src/lib/authOptions.ts
 import { NextAuthOptions} from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../db/db"; // Adjust path if needed
@@ -7,8 +8,13 @@ import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  providers: [ 
-    // Add other providers like Google here if you still need them
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // Optional: You can request additional scopes or customize profile data
+      // authorization: { params: { scope: "openid email profile https://www.googleapis.com/auth/userinfo.profile" } },
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -66,7 +72,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name, // Add other fields as needed
-        
+
           // Add other properties you want in the session/token
         };
       },
@@ -80,14 +86,17 @@ export const authOptions: NextAuthOptions = {
     // error: '/auth/error', // Optional: custom error page
     // signOut: '/logout', // Optional: custom signout page
   },
-  callbacks: { 
+  callbacks: {
     // You might need callbacks to customize the session or JWT token
-    async jwt({ token, user }) {
-      // When authorize returns a user, add its id to the token
-      if (user) {
+    async jwt({ token, user, account }) { // account is available here
+      // When authorize returns a user, or if it's a sign-in with an OAuth provider
+      if (account && user) { // This condition is true for OAuth sign-ins
         token.id = user.id;
-        // Add any other user properties you want in the token
-       
+        // You can add other user properties from the OAuth provider if needed
+        // For example, if you want to store the access token from Google:
+        // token.accessToken = account.access_token;
+      } else if (user) { // This condition is true for credentials provider
+        token.id = user.id;
       }
       return token;
     },
@@ -108,4 +117,3 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET, // Ensure this is set in your .env file
   debug: process.env.NODE_ENV === "development", // Optional: Enable debug logs in development
 };
-

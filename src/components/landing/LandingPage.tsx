@@ -69,7 +69,7 @@ export default function LandingPage() {
       <div className={`relative z-10 ${isModalOpen ? "blur-sm" : ""}`}>
         {/* Header */}
         <div className="w-full md:w-2/3 flex items-center justify-between mx-auto border-b-2 border-gray-300 h-14 px-4 z-10 bg-[#f3f7f9] ">
-          <span className="text-[#253b47] font-bold text-lg">campussync</span>
+          <span className="text-[#253b47] font-bold text-lg">campusx</span>
 
           {/* Hamburger Menu for Mobile */}
           <div className="md:hidden cursor-pointer" onClick={toggleMenu}>
