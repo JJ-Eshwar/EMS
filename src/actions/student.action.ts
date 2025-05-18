@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use server";
 import prisma from "../db/db";
 import { StudentSchema } from "../lib/validators/student.validator";

@@ -89,9 +89,11 @@ const Onboarding: React.FC = () => {
           All set! You&apos;ve completed the setup.It&apos;s time to dive in and
           make your organisation management easy.
         </p>
-        <button className="py-2 px-4 bg-primary-red text-slate-200 hover:text-white rounded-3xl border-gray-600">
-          Dashboard
-        </button>
+        <a href="../dashboard">
+          <button className="py-2 px-4 bg-primary-red text-slate-200 hover:text-white rounded-3xl border-gray-600">
+            Dashboard
+          </button></a>
+
       </div>
       <FooterPage />
     </div>

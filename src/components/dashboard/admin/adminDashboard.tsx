@@ -484,9 +484,9 @@ export const AdminDashboard = () => {
           <div className="p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Total Employees</span>
-              <span className="text-xs text-gray-500">Updated 1h ago</span>
+              <span className="text-xs text-gray-500">Updated 1min ago</span>
             </div>
-            <p className="text-2xl font-bold text-gray-800 mt-2">78</p>
+            <p className="text-2xl font-bold text-gray-800 mt-2">3</p>
           </div>
           <div className="p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between">

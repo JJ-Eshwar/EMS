@@ -118,11 +118,11 @@ const StudentDashboard = () => {
           </div>
           <div className="space-y-3">
             <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="font-medium">Math Assignment</p>
+              <p className="font-medium">Java Assignment</p>
               <p className="text-sm text-gray-600">Due in 2 days</p>
             </div>
             <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="font-medium">Science Project</p>
+              <p className="font-medium">webdev Project</p>
               <p className="text-sm text-gray-600">Due in 5 days</p>
             </div>
           </div>
@@ -136,7 +136,7 @@ const StudentDashboard = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-gray-600 text-sm">Attendance</p>
-            <p className="text-2xl font-bold text-gray-800">92%</p>
+            <p className="text-2xl font-bold text-gray-800">62%</p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-gray-600 text-sm">Average Grade</p>
@@ -151,8 +151,8 @@ const StudentDashboard = () => {
       >
         <div className="space-y-3">
           {[
-            { subject: "Mathematics", time: "9:00 AM", room: "Room 101" },
-            { subject: "Science", time: "11:00 AM", room: "Lab 2" },
+            { subject: "Java", time: "9:00 AM", room: "Room 101" },
+            { subject: "Webdev", time: "11:00 AM", room: "Lab 2" },
           ].map((schedule, index) => (
             <div
               key={index}
