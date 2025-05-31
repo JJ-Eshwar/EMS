@@ -1,26 +1,31 @@
+
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Added useEffect for logging example
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
-import type { Session } from "next-auth";
 import toast from "react-hot-toast";
 
 const Header: React.FC = () => {
   const router = useRouter();
-  const { data: session }: { data: Session | null } = useSession();
+  const { data: session, status } = useSession(); 
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    console.log("Header Session Status:", status);
+    console.log("Header Session Data:", session);
+  }, [session, status]);
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // Handle SignIn click
+  
   const handleSignIn = () => {
-    router.push("/sign-in");
+    router.push("/sign-in"); 
   };
 
-  // Handle SignOut click
+  
   const handleSignOut = () => {
     signOut({ redirect: false });
     toast.success("SignOut Successful");
@@ -29,7 +34,7 @@ const Header: React.FC = () => {
     }, 1000);
   };
 
-  // Function to check if a link is active
+  
   const isActive = (path: string) => pathname === path;
 
   return (
@@ -78,7 +83,7 @@ const Header: React.FC = () => {
         </span>
         <span
           className={`cursor-pointer font-sans ${
-            isActive("/Pricing")
+            isActive("/Pricing") // Consider if this should be /Information/Pricing based on mobile menu
               ? "text-primary-red"
               : "text-[#8f9ca3] hover:text-primary-red"
           }`}
@@ -89,7 +94,7 @@ const Header: React.FC = () => {
       </div>
 
       <div className="hidden md:flex gap-2">
-        {session ? (
+        {session ? ( 
           <button
             className="bg-[#ffe8e5] shadow-sm h-8 px-4 rounded-2xl"
             onClick={handleSignOut}
@@ -114,7 +119,7 @@ const Header: React.FC = () => {
                 ? "text-primary-red"
                 : "text-[#8f9ca3] hover:text-primary-red"
             } py-2`}
-            onClick={() => router.push("/about")}
+            onClick={() => { router.push("/about"); setMenuOpen(false); }}
           >
             About
           </span>
@@ -124,7 +129,7 @@ const Header: React.FC = () => {
                 ? "text-primary-red"
                 : "text-[#8f9ca3] hover:text-primary-red"
             } py-2`}
-            onClick={() => router.push("/business")}
+            onClick={() => { router.push("/business"); setMenuOpen(false); }}
           >
             For Business
           </span> */}
@@ -134,20 +139,38 @@ const Header: React.FC = () => {
                 ? "text-primary-red"
                 : "text-[#8f9ca3] hover:text-primary-red"
             } py-2`}
-            onClick={() => router.push("/demo")}
+            onClick={() => { router.push("/demo"); setMenuOpen(false); }}
           >
             Try for free
           </span>
           <span
             className={`cursor-pointer font-sans ${
-              isActive("/Information/Pricing")
+              isActive("/Pricing") // Corrected from /Information/Pricing to match desktop
                 ? "text-primary-red"
                 : "text-[#8f9ca3] hover:text-primary-red"
             } py-2`}
-            onClick={() => router.push("/Pricing")}
+            onClick={() => { router.push("/Pricing"); setMenuOpen(false); }}
           >
             Pricing
           </span>
+          {/* Adding Sign In/Sign Out to mobile menu for completeness */}
+          <div className="py-2 w-full">
+            {session ? (
+              <button
+                className="bg-[#ffe8e5] shadow-sm h-8 px-4 rounded-2xl w-full text-left"
+                onClick={() => { handleSignOut(); setMenuOpen(false); }}
+              >
+                <span className="text-primary-red font-sans">Sign Out</span>
+              </button>
+            ) : (
+              <button
+                className="bg-[#ffe8e5] shadow-sm h-8 px-4 rounded-2xl w-full text-left"
+                onClick={() => { handleSignIn(); setMenuOpen(false); }}
+              >
+                <span className="text-primary-red font-sans">Sign In</span>
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -155,3 +178,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+

@@ -1,9 +1,9 @@
-// src/lib/authOptions.ts
+
 import { NextAuthOptions} from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "../db/db"; // Adjust path if needed
+import prisma from "../db/db"; 
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt", // Using JWT for session strategy is common
   },
   pages: {
-    signIn: '/login', // Specify your custom login page path
+    signIn: '/onboarding', // Specify your custom login page path
     // error: '/auth/error', // Optional: custom error page
     // signOut: '/logout', // Optional: custom signout page
   },

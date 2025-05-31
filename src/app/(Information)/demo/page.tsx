@@ -8,6 +8,7 @@ import Particles from "@/src/components/ui/particles";
 import { Marquee } from "@/src/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+
 const reviews = [
   {
     name: "Jack",
@@ -118,8 +119,9 @@ const Demo = () => {
                 workflow.
               </p>
               <div className="md:mt-8 mt-2 md:space-y-4 space-y-2">
+                
                 <button className="bg-primary-red text-white md:py-3 py-1 md:px-8 px-2 rounded-full text-lg font-semibold shadow-lg hover:bg-red-600 transform transition hover:scale-105">
-                  Start Free Trial
+                  <a href="../sign-in"> Start Free Trial</a>
                 </button>
                 <div className="flex items-center md:gap-2 text-sm text-[#8c9499]">
                   <FaCheck className="text-primary-red" />
